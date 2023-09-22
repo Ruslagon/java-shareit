@@ -22,5 +22,6 @@ public interface ItemRepository {
     void containsSameOwner(Long userId, Long itemId);
 
     void containsById(Long itemId);
+
     Item getOne(Long itemId);
 }

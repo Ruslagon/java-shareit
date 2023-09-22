@@ -77,6 +77,7 @@ public class BookingService {
         userRepository.containsById(requesterId);
         bookingRepository.deleteReview(requesterId, reviewId);
     }
+
     public List<ReviewDto> getReviewsForItem(Long userId, Long itemId) {
         userRepository.containsById(userId);
         return bookingRepository.getReviewsForItem(itemId);

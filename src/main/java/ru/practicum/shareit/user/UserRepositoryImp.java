@@ -103,7 +103,9 @@ public class UserRepositoryImp implements UserRepository {
     @Override
     public void containsEmailForUpdate(String email,Long userId) {
         users.stream().filter(user -> (email.equals(user.getEmail()) && !(user.getId().equals(userId)))).findFirst()
-                .ifPresent((user) -> {throw new ConflictException("email - " + email + ", уже занят");});
+                .ifPresent((user) -> {
+                    throw new ConflictException("email - " + email + ", уже занят");
+                } );
     }
 
     @Override
