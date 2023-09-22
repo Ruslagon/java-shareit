@@ -105,7 +105,7 @@ public class UserRepositoryImp implements UserRepository {
         users.stream().filter(user -> (email.equals(user.getEmail()) && !(user.getId().equals(userId)))).findFirst()
                 .ifPresent((user) -> {
                     throw new ConflictException("email - " + email + ", уже занят");
-                } );
+                });
     }
 
     @Override
