@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ReviewDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Review;
@@ -11,15 +10,15 @@ public interface BookingRepository {
 
     Booking add(Long userId, Long itemId, Booking booking);
 
-    Booking update(Long userId, Long itemId, BookingDto booking);
+    Booking update(Long userId, Long itemId, Booking booking);
 
     void delete(Long requesterId, Long bookingId);
 
     List<Booking> getUsersBookings(Long ownerId);
 
-    BookingDto getOne(Long userId, Long bookingId);
+    Booking getOne(Long bookingId);
 
-    List<BookingDto> getByItemIdAndStatus(Long itemId, BookingStatus status);
+    List<Booking> getByItemIdAndStatus(Long itemId, BookingStatus status);
 
     Review addReview(Long requesterId, Long bookingId, Review review);
 
@@ -27,5 +26,8 @@ public interface BookingRepository {
 
     void deleteReview(Long requesterId, Long reviewId);
 
-    List<ReviewDto> getReviewsForItem(Long itemId);
+    List<Review> getReviewsForItem(Long itemId);
+    void deleteByUserId(Long userId);
+
+    void deleteByItemId(Long itemId);
 }

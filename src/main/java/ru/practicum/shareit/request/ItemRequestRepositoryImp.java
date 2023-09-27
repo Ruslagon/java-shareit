@@ -1,39 +1,35 @@
 package ru.practicum.shareit.request;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.MainData;
 import ru.practicum.shareit.exception.EntityNotFoundException;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 public class ItemRequestRepositoryImp implements ItemRequestRepository {
-    private final List<ItemRequest> requests;
-    private final List<Item> items;
+    private final Map<Long, ItemRequest> requestsMap = new HashMap<>();
     private Long globalId = 1L;
-
-    public ItemRequestRepositoryImp(MainData mainData) {
-        this.requests = mainData.getRequests();
-        items = mainData.getItems();
-    }
 
     @Override
     public ItemRequest add(Long userId, ItemRequest request) {
         request.setId(globalId);
-        globalId++;
         request.setRequesterId(userId);
-        requests.add(request);
+        requestsMap.put(globalId, request);
+        globalId++;
         return request;
     }
 
     @Override
     public void containsById(Long requestId) {
-        requests.stream().filter(request -> request.getId().equals(requestId)).findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("request по id - " + requestId + " не найден"));
+        if (requestsMap.containsKey(requestId)) {
+            return;
+        }
+        throw new EntityNotFoundException("request по id - " + requestId + " не найден");
     }
 
     @Override
@@ -45,62 +41,56 @@ public class ItemRequestRepositoryImp implements ItemRequestRepository {
     }
 
     @Override
-    public ItemRequestDto update(Long userId,ItemRequestDto requestDto, Long requestId) {
-        containsSameOwner(userId, requestId);
+    public ItemRequest update(ItemRequest request, Long requestId) {
         ItemRequest oldRequest = getRequest(requestId);
-        if (requestDto.getDescription() != null) {
-            oldRequest.setDescription(requestDto.getDescription());
+        if (request.getDescription() != null) {
+            oldRequest.setDescription(request.getDescription());
         }
-        if (requestDto.getResolved() != null) {
-            oldRequest.setResolved(requestDto.getResolved());
+        if (request.getResolved() != null) {
+            oldRequest.setResolved(request.getResolved());
         }
-        return toDto(oldRequest);
+        return oldRequest;
     }
 
     @Override
     public List<ItemRequest> getAllForUser(Long userId) {
-        return requests.stream().filter(request -> request.getRequesterId().equals(userId)).collect(Collectors.toList());
+        return requestsMap.values().stream()
+                .filter(request -> request.getRequesterId().equals(userId)).collect(Collectors.toList());
     }
 
     @Override
-    public ItemRequestDto getOneWithOutOwner(Long requestId) {
+    public ItemRequest getOneWithOutOwner(Long requestId) {
         containsById(requestId);
-        return toDto(getRequest(requestId));
+        return getRequest(requestId);
     }
 
     @Override
-    public List<ItemRequestDto> search(String text) {
-        return requests.stream()
+    public List<ItemRequest> search(String text) {
+        return requestsMap.values().stream()
                 .filter(request -> request.getDescription().toLowerCase().contains(text))
-                .map(this::toDto).collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void delete(Long userId, Long requestId) {
-        containsSameOwner(userId, requestId);
-        for (ItemRequest request : requests) {
-            if (request.getId().equals(requestId)) {
-                for (Item item : items) {
-                   if (requestId.equals(item.getRequestId())) {
-                       item.setRequestId(null);
-                   }
-                }
-                requests.remove(request);
-            }
-        }
+    public void delete(Long requestId) {
+        requestsMap.remove(requestId);
     }
 
-    private ItemRequestDto toDto(ItemRequest request) {
-        ItemRequestDto requestDto = new ItemRequestDto();
-        requestDto.setId(request.getId());
-        requestDto.setCreated(request.getCreated());
-        requestDto.setDescription(request.getDescription());
-        requestDto.setResolved(request.getResolved());
-        return requestDto;
+    @Override
+    public List<Long> deleteByUserIdAndGetDeletedIds(Long userId) {
+        List<Long> deletedIds = new ArrayList<>();
+        requestsMap.values().removeIf(request -> {
+            if (request.getRequesterId().equals(userId)) {
+                deletedIds.add(request.getId());
+                return true;
+            }
+            return false;
+        });
+        return deletedIds;
     }
 
     private ItemRequest getRequest(Long requestId) {
-        return requests.stream().filter(request -> request.getId().equals(requestId)).findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("request по id - " + requestId + " не найден"));
+        containsById(requestId);
+        return requestsMap.get(requestId);
     }
 }

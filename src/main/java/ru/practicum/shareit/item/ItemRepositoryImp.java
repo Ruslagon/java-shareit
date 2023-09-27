@@ -1,69 +1,58 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.MainData;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Review;
 import ru.practicum.shareit.exception.EntityNotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 public class ItemRepositoryImp implements ItemRepository {
-    private final List<Item> items;
-    private final List<Booking> bookings;
-    private final List<Review> reviews;
+    private final Map<Long, Item> itemsMap = new HashMap<>();
     private Long globalId = 1L;
 
-    public ItemRepositoryImp(MainData mainData) {
-        this.items = mainData.getItems();
-        this.bookings = mainData.getBookings();
-        this.reviews = mainData.getReviews();
-    }
 
     @Override
     public Item add(Long userId, Item item) {
         item.setOwnerId(userId);
         item.setId(globalId);
+        itemsMap.put(globalId, item);
         globalId++;
-        items.add(item);
         return item;
     }
 
     @Override
     public Item getOne(Long itemId) {
-        return items.stream().filter(item -> item.getId().equals(itemId)).findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("item по id - " + itemId + " не найден"));
+        containsById(itemId);
+        return itemsMap.get(itemId);
     }
 
     @Override
-    public Item update(Long userId, ItemDto itemDto, Long itemId) {
-        containsSameOwner(userId, itemId);
-
+    public Item update(Item item, Long itemId) {
         Item oldItemToUpdate = getOne(itemId);
-        if (itemDto.getName() != null) {
-            oldItemToUpdate.setName(itemDto.getName());
+        if (item.getName() != null) {
+            oldItemToUpdate.setName(item.getName());
         }
-        if (itemDto.getDescription() != null) {
-            oldItemToUpdate.setDescription(itemDto.getDescription());
+        if (item.getDescription() != null) {
+            oldItemToUpdate.setDescription(item.getDescription());
         }
-        if (itemDto.getAvailable() != null) {
-            oldItemToUpdate.setAvailable(itemDto.getAvailable());
+        if (item.getAvailable() != null) {
+            oldItemToUpdate.setAvailable(item.getAvailable());
         }
         return oldItemToUpdate;
     }
 
     @Override
     public List<Item> getAllForUser(Long userId) {
-        return items.stream().filter(item -> item.getOwnerId().equals(userId)).collect(Collectors.toList());
+        return itemsMap.values().stream().filter(item -> item.getOwnerId().equals(userId)).collect(Collectors.toList());
     }
 
     @Override
-    public ItemDto getOneWithoutOwner(Long itemId) {
-        return toItemDto(getOne(itemId));
+    public Item getOneWithoutOwner(Long itemId) {
+        return getOne(itemId);
     }
 
     @Override
@@ -76,32 +65,35 @@ public class ItemRepositoryImp implements ItemRepository {
 
     @Override
     public void containsById(Long itemId) {
-        items.stream().filter(item -> item.getId().equals(itemId)).findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("item по id - " + itemId + " не найден"));
+        if (itemsMap.containsKey(itemId)) {
+            return;
+        }
+        throw new EntityNotFoundException("item по id - " + itemId + " не найден");
     }
 
     @Override
-    public List<ItemDto> search(Long userId, String text) {
-        return items.stream().filter(Item::getAvailable)
+    public List<Item> search(String text) {
+        return itemsMap.values().stream().filter(Item::getAvailable)
                 .filter(item -> item.getDescription().toLowerCase().contains(text) || item.getName().toLowerCase().contains(text))
-                .map(this::toItemDto).collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void delete(Long userId, Long itemId) {
-        containsSameOwner(userId, itemId);
-        items.removeIf(item -> item.getId().equals(itemId));
-        bookings.removeIf(booking -> booking.getItemId().equals(itemId));
-        reviews.removeIf(review -> review.getReviewedItemId().equals(itemId));
+    public void delete(Long itemId) {
+        itemsMap.remove(itemId);
     }
 
-    private ItemDto toItemDto(Item item) {
-        ItemDto itemDto = new ItemDto();
-        itemDto.setId(item.getId());
-        itemDto.setName(item.getName());
-        itemDto.setDescription(item.getDescription());
-        itemDto.setAvailable(item.getAvailable());
-        itemDto.setRequestId(item.getRequestId());
-        return itemDto;
+    @Override
+    public void clearFromDeletedRequests(List<Long> reqIds) {
+        for (Item item : itemsMap.values()) {
+            if (item.getRequestId() != null && reqIds.contains(item.getRequestId())) {
+                item.setRequestId(null);
+            }
+        }
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        itemsMap.values().removeIf(item -> item.getOwnerId().equals(userId));
     }
 }

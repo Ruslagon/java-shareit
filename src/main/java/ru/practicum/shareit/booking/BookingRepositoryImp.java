@@ -1,8 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.MainData;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ReviewDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Review;
@@ -10,36 +8,33 @@ import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 
 import javax.validation.ValidationException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 public class BookingRepositoryImp implements BookingRepository {
-    private final List<Booking> bookings;
-    private final List<Review> reviews;
+    private final Map<Long, Booking> bookingsMap = new HashMap<>();
+    private final Map<Long ,Review> reviewsMap = new HashMap<>();
     private Long globalId = 1L;
-    private Long reviewGlobalId = 1L;
-
-    public BookingRepositoryImp(MainData mainData) {
-        this.bookings = mainData.getBookings();
-        this.reviews = mainData.getReviews();
-    }
 
     @Override
     public Booking add(Long userId, Long itemId, Booking booking) {
         booking.setId(globalId);
-        globalId++;
+
         booking.setItemId(itemId);
         booking.setBookerId(userId);
         booking.setStatus(BookingStatus.WAITING);
 
         checkConflictTime(itemId,booking);
-        bookings.add(booking);
+        bookingsMap.put(globalId, booking);
+        globalId++;
         return booking;
     }
 
     @Override
-    public Booking update(Long userId, Long bookingId, BookingDto booking) {
+    public Booking update(Long userId, Long bookingId, Booking booking) {
         Booking oldBooking = getBooking(bookingId);
         if (!oldBooking.getItemOwnerId().equals(userId)) {
             throw new ValidationException("юзер не является владельцем предмета");
@@ -51,35 +46,39 @@ public class BookingRepositoryImp implements BookingRepository {
     }
 
     public Booking getBooking(Long bookingId) {
-        return bookings.stream().filter(booking -> booking.getId().equals(bookingId)).findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("не найден booking с id - " + bookingId));
+        if (bookingsMap.containsKey(bookingId)) {
+            return bookingsMap.get(bookingId);
+        }
+        throw new EntityNotFoundException("не найден booking с id - " + bookingId);
     }
 
     @Override
     public void delete(Long requesterId, Long bookingId) {
-        bookings.removeIf(booking -> booking.getId().equals(bookingId) && booking.getBookerId().equals(requesterId));
-        reviews.removeIf(review -> review.getBookingId().equals(bookingId) && review.getClientId().equals(requesterId));
+        if (bookingsMap.get(bookingId).getBookerId().equals(requesterId)) {
+            bookingsMap.remove(bookingId);
+        }
+        reviewsMap.values().removeIf(review -> review.getBookingId().equals(bookingId) && review.getClientId().equals(requesterId));
     }
 
     @Override
     public List<Booking> getUsersBookings(Long ownerId) {
-        return bookings.stream().filter(booking -> booking.getItemOwnerId().equals(ownerId)).collect(Collectors.toList());
+        return bookingsMap.values().stream().filter(booking -> booking.getItemOwnerId().equals(ownerId)).collect(Collectors.toList());
     }
 
     @Override
-    public BookingDto getOne(Long userId, Long bookingId) {
-        return toDto(getBooking(bookingId));
+    public Booking getOne(Long bookingId) {
+        return getBooking(bookingId);
     }
 
     @Override
-    public List<BookingDto> getByItemIdAndStatus(Long itemId, BookingStatus status) {
-        return bookings.stream().filter(booking -> {
+    public List<Booking> getByItemIdAndStatus(Long itemId, BookingStatus status) {
+        return bookingsMap.values().stream().filter(booking -> {
             if (status == null) {
                 return booking.getItemId().equals(itemId);
             } else {
                 return (booking.getItemId().equals(itemId) && booking.getStatus().equals(status));
             }
-            }).map(this::toDto).collect(Collectors.toList());
+            }).collect(Collectors.toList());
     }
 
     @Override
@@ -87,12 +86,11 @@ public class BookingRepositoryImp implements BookingRepository {
         var booking = getBooking(bookingId);
 
         checkBooking(booking, requesterId);
-        review.setId(reviewGlobalId);
-        reviewGlobalId++;
+        review.setId(bookingId);
         review.setBookingId(bookingId);
         review.setClientId(requesterId);
         review.setReviewedItemId(booking.getItemId());
-        reviews.add(review);
+        reviewsMap.put(bookingId, review);
         return review;
     }
 
@@ -112,18 +110,42 @@ public class BookingRepositoryImp implements BookingRepository {
 
     @Override
     public void deleteReview(Long requesterId, Long reviewId) {
-        reviews.removeIf(review -> review.getClientId().equals(requesterId) && review.getId().equals(reviewId));
+        if (reviewsMap.get(reviewId).getClientId().equals(requesterId)) {
+            reviewsMap.remove(reviewId);
+        }
     }
 
     @Override
-    public List<ReviewDto> getReviewsForItem(Long itemId) {
-        return reviews.stream().filter(review -> review.getReviewedItemId().equals(itemId))
-                .map(this::reviewToDto).collect(Collectors.toList());
+    public List<Review> getReviewsForItem(Long itemId) {
+        return reviewsMap.values().stream().filter(review -> review.getReviewedItemId().equals(itemId))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        for (Booking booking : bookingsMap.values()) {
+            if (booking.getBookerId().equals(userId) || booking.getItemOwnerId().equals(userId)) {
+                reviewsMap.remove(booking.getId());
+                bookingsMap.remove(booking.getId());
+            }
+        }
+    }
+
+    @Override
+    public void deleteByItemId(Long itemId) {
+        for (Booking booking : bookingsMap.values()) {
+            if (booking.getItemId().equals(itemId)) {
+                reviewsMap.remove(booking.getId());
+                bookingsMap.remove(booking.getId());
+            }
+        }
     }
 
     private Review getReview(Long bookingId) {
-        return reviews.stream().filter(review -> review.getBookingId().equals(bookingId)).findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("не найден отзыв к booking id - " + bookingId));
+        if (reviewsMap.containsKey(bookingId)) {
+            return reviewsMap.get(bookingId);
+        }
+        throw new EntityNotFoundException("не найден отзыв к booking id - " + bookingId);
     }
 
     private void checkBooking(Booking booking, Long requesterId) {
@@ -132,30 +154,10 @@ public class BookingRepositoryImp implements BookingRepository {
         }
     }
 
-    private ReviewDto reviewToDto(Review review) {
-        ReviewDto reviewDto = new ReviewDto();
-        reviewDto.setId(review.getId());
-        reviewDto.setReviewedItemId(review.getReviewedItemId());
-        reviewDto.setReviewTime(review.getReviewTime());
-        reviewDto.setPositive(review.getPositive());
-        reviewDto.setOpinion(review.getOpinion());
-        return reviewDto;
-    }
-
-    private BookingDto toDto(Booking booking) {
-        BookingDto bookingDto = new BookingDto();
-        bookingDto.setId(booking.getId());
-        bookingDto.setEnd(booking.getEnd());
-        bookingDto.setStart(booking.getStart());
-        bookingDto.setStatus(booking.getStatus());
-        bookingDto.setItemId(booking.getItemId());
-        return bookingDto;
-    }
-
     private void checkConflictTime(Long itemId, Booking booking) {
         var newStart = booking.getStart();
         var newEnd = booking.getEnd();
-        for (Booking oldBooking : bookings) {
+        for (Booking oldBooking : bookingsMap.values()) {
             if (oldBooking.getItemId().equals(itemId) && oldBooking.getStatus().equals(BookingStatus.APPROVED)) {
                 var oldStart = oldBooking.getStart();
                 var oldEnd = oldBooking.getEnd();

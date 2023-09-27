@@ -1,27 +1,45 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * TODO Sprint add-controllers.
  */
-@Data
+@Getter
+@Setter
+@ToString
 public class Item {
-    Long id;
+    private Long id;
 
-    Long ownerId;
+    private Long ownerId;
 
-    Long requestId;
-
-    @NotBlank
-    String name;
+    private Long requestId;
 
     @NotBlank
-    String description;
+    private String name;
+
+    @NotBlank
+    private String description;
 
     @NotNull
-    Boolean available;
+    private Boolean available;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return Objects.equals(id, item.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

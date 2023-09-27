@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -10,7 +9,7 @@ public interface UserRepository {
 
     boolean containsEmail(String email);
 
-    User update(UserDto userToUpdate, Long userId);
+    User update(User userToUpdate, Long userId);
 
     User getUser(Long userId);
 

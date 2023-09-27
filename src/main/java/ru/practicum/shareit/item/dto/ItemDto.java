@@ -1,19 +1,48 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
+import ru.practicum.shareit.validation.Marker;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * TODO Sprint add-controllers.
  */
-@Data
+@Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class ItemDto {
-    Long id;
+    private Long id;
 
-    Long requestId;
+    private Long ownerId;
 
-    String name;
+    private Long requestId;
 
-    String description;
+    @NotBlank(groups = Marker.OnCreate.class)
+    private String name;
 
-    Boolean available;
+    @NotBlank(groups = Marker.OnCreate.class)
+    private String description;
+
+    @NotNull(groups = Marker.OnCreate.class)
+    private Boolean available;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemDto itemDto = (ItemDto) o;
+        return Objects.equals(id, itemDto.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

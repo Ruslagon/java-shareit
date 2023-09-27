@@ -2,22 +2,23 @@ package ru.practicum.shareit.booking;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.DtoBookingMapper;
+import ru.practicum.shareit.booking.dto.DtoReviewMapper;
 import ru.practicum.shareit.booking.dto.ReviewDto;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Review;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import javax.validation.ValidationException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
 
-    BookingRepository bookingRepository;
-    UserRepository userRepository;
-    ItemRepository itemRepository;
+    private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     public BookingService(BookingRepository bookingRepository, UserRepository userRepository, ItemRepository itemRepository) {
         this.bookingRepository = bookingRepository;
@@ -25,7 +26,7 @@ public class BookingService {
         this.itemRepository = itemRepository;
     }
 
-    public Booking add(Long userId, Long itemId, Booking booking) {
+    public BookingDto add(Long userId, Long itemId, BookingDto booking) {
         userRepository.containsById(userId);
 
         var item = itemRepository.getOne(itemId);
@@ -35,13 +36,12 @@ public class BookingService {
 
         booking.setItemOwnerId(item.getOwnerId());
         checkBookingTime(booking);
-        return bookingRepository.add(userId, itemId, booking);
+        return DtoBookingMapper.bookingToDto(bookingRepository.add(userId, itemId, DtoBookingMapper.dtoToBooking(booking)));
     }
 
-    public Booking update(Long userId, Long bookingId, BookingDto booking) {
+    public BookingDto update(Long userId, Long bookingId, BookingDto booking) {
         userRepository.containsById(userId);
-
-        return bookingRepository.update(userId, bookingId, booking);
+        return DtoBookingMapper.bookingToDto(bookingRepository.update(userId, bookingId, DtoBookingMapper.dtoToBooking(booking)));
     }
 
     public void delete(Long requesterId, Long bookingId) {
@@ -49,28 +49,30 @@ public class BookingService {
         bookingRepository.delete(requesterId, bookingId);
     }
 
-    public List<Booking> getUsersBookings(Long ownerId) {
+    public List<BookingDto> getUsersBookings(Long ownerId) {
         userRepository.containsById(ownerId);
-        return bookingRepository.getUsersBookings(ownerId);
+        return bookingRepository.getUsersBookings(ownerId).stream().map(DtoBookingMapper::bookingToDto)
+                .collect(Collectors.toList());
     }
 
     public BookingDto getOne(Long userId, Long bookingId) {
         userRepository.containsById(userId);
-        return bookingRepository.getOne(userId, bookingId);
+        return DtoBookingMapper.bookingToDtoWithoutUsers(bookingRepository.getOne(bookingId));
     }
 
     public List<BookingDto> getByItemIdAndStatus(Long itemId, BookingStatus status) {
-        return bookingRepository.getByItemIdAndStatus(itemId, status);
+        return bookingRepository.getByItemIdAndStatus(itemId, status).stream().map(DtoBookingMapper::bookingToDto)
+                .collect(Collectors.toList());
     }
 
-    public Review addReview(Long requesterId, Long bookingId, Review review) {
+    public ReviewDto addReview(Long requesterId, Long bookingId, ReviewDto reviewDto) {
         userRepository.containsById(requesterId);
-        return bookingRepository.addReview(requesterId, bookingId, review);
+        return DtoReviewMapper.reviewToDto(bookingRepository.addReview(requesterId, bookingId, DtoReviewMapper.dtoToReview(reviewDto)));
     }
 
-    public Review updateReview(Long requesterId, Long bookingId, ReviewDto reviewDto) {
+    public ReviewDto updateReview(Long requesterId, Long bookingId, ReviewDto reviewDto) {
         userRepository.containsById(requesterId);
-        return bookingRepository.updateReview(requesterId, bookingId, reviewDto);
+        return DtoReviewMapper.reviewToDto(bookingRepository.updateReview(requesterId, bookingId, reviewDto));
     }
 
     public void deleteReview(Long requesterId, Long reviewId) {
@@ -80,10 +82,11 @@ public class BookingService {
 
     public List<ReviewDto> getReviewsForItem(Long userId, Long itemId) {
         userRepository.containsById(userId);
-        return bookingRepository.getReviewsForItem(itemId);
+        return bookingRepository.getReviewsForItem(itemId).stream().map(DtoReviewMapper::reviewToDtoWithoutUsers)
+                .collect(Collectors.toList());
     }
 
-    private void checkBookingTime(Booking booking) {
+    private void checkBookingTime(BookingDto booking) {
         if (booking.getStart().isAfter(booking.getEnd())) {
             throw new ValidationException("время введено неверно");
         }

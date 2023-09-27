@@ -1,22 +1,33 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.Data;
+import lombok.*;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import java.util.Objects;
 
 /**
  * TODO Sprint add-controllers.
  */
 
-@Data
+@Getter
+@Setter
+@ToString
 public class User {
-    Long id;
+    private Long id;
 
-    @NotEmpty
-    String name;
+    private String name;
 
-    @Email
-    @NotEmpty
-    String email;
+    private String email;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

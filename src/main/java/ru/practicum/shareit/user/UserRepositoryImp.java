@@ -1,56 +1,31 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.MainData;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Review;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.EntityNotFoundException;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserRepositoryImp implements UserRepository {
-
-    private final List<User> users;
-    private final List<Item> items;
-    private final List<ItemRequest> requests;
-    private final List<Booking> bookings;
-
-    private final List<Review> reviews;
+    private final Map<Long, User> usersMap = new HashMap<>();
     private Long globalId = 1L;
-
-    public UserRepositoryImp(MainData mainData) {
-        this.users = mainData.getUsers();
-        this.items = mainData.getItems();
-        this.requests = mainData.getRequests();
-        this.bookings = mainData.getBookings();
-        this.reviews = mainData.getReviews();
-    }
 
     @Override
     public User add(User userToAdd) {
-        if (containsEmail(userToAdd.getEmail())) {
-            throw new ConflictException("email - " + userToAdd.getEmail() + ", уже занят");
-        }
         userToAdd.setId(globalId);
+        usersMap.put(globalId, userToAdd);
         globalId++;
-        users.add(userToAdd);
         return userToAdd;
     }
 
     @Override
-    public User update(UserDto userToUpdate, Long userId) {
-        containsById(userId);
-        if (userToUpdate.getEmail() != null) {
-            containsEmailForUpdate(userToUpdate.getEmail(), userId);
-        }
-
-        User oldUserToUpdate = getUser(userId);
+    public User update(User userToUpdate, Long userId) {
+        User oldUserToUpdate = usersMap.get(userId);
         if (userToUpdate.getEmail() != null) {
             oldUserToUpdate.setEmail(userToUpdate.getEmail());
         }
@@ -62,36 +37,17 @@ public class UserRepositoryImp implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        return users;
+        return new ArrayList<>(usersMap.values());
     }
 
     @Override
     public void delete(Long userId) {
-        users.removeIf(user -> user.getId().equals(userId));
-        requests.removeIf(request -> {
-            if (request.getRequesterId().equals(userId)) {
-                for (Item item : items) {
-                    if (request.getId().equals(item.getRequestId())) {
-                        item.setRequestId(null);
-                    }
-                }
-                return true;
-            } else {
-                return false;
-            }
-        });
-        bookings.removeIf(booking -> booking.getBookerId().equals(userId));
-        reviews.removeIf(review -> review.getClientId().equals(userId));
-        for (Item item : items) {
-            if (item.getOwnerId().equals(userId)) {
-                delete(item.getId());
-            }
-        }
+        usersMap.remove(userId);
     }
 
     @Override
     public boolean containsEmail(String email) {
-        for (User olduser : users) {
+        for (User olduser : usersMap.values()) {
             if (email.equals(olduser.getEmail())) {
                 return true;
             }
@@ -102,7 +58,7 @@ public class UserRepositoryImp implements UserRepository {
 
     @Override
     public void containsEmailForUpdate(String email,Long userId) {
-        users.stream().filter(user -> (email.equals(user.getEmail()) && !(user.getId().equals(userId)))).findFirst()
+        usersMap.values().stream().filter(user -> (email.equals(user.getEmail()) && !(user.getId().equals(userId)))).findFirst()
                 .ifPresent((user) -> {
                     throw new ConflictException("email - " + email + ", уже занят");
                 });
@@ -110,13 +66,14 @@ public class UserRepositoryImp implements UserRepository {
 
     @Override
     public User getUser(Long userId) {
-        return users.stream().filter(user -> user.getId().equals(userId)).findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("user по id - " + userId + " не найден"));
+        return usersMap.get(userId);
     }
 
     @Override
     public void containsById(Long userId) {
-        users.stream().filter(user -> user.getId().equals(userId)).findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("user по id - " + userId + " не найден"));
+        if (usersMap.containsKey(userId)) {
+            return;
+        }
+        throw new EntityNotFoundException("user по id - " + userId + " не найден");
     }
 }

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
@@ -12,13 +11,14 @@ public interface ItemRequestRepository {
 
     void containsSameOwner(Long userId, Long requestId);
 
-    ItemRequestDto update(Long userId, ItemRequestDto requestDto, Long requestId);
+    ItemRequest update(ItemRequest request, Long requestId);
 
     List<ItemRequest> getAllForUser(Long userId);
 
-    ItemRequestDto getOneWithOutOwner(Long requestId);
+    ItemRequest getOneWithOutOwner(Long requestId);
 
-    List<ItemRequestDto> search(String text);
+    List<ItemRequest> search(String text);
 
-    void delete(Long userId, Long requestId);
+    void delete(Long requestId);
+    List<Long> deleteByUserIdAndGetDeletedIds(Long userId);
 }

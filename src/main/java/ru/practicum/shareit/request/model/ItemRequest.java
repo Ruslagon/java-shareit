@@ -1,22 +1,38 @@
 package ru.practicum.shareit.request.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * TODO Sprint add-item-requests.
  */
-@Data
+@Getter
+@Setter
+@ToString
 public class ItemRequest {
     Long id;
-    @NotBlank
     String description;
 
     Long requesterId;
 
-    LocalDateTime created = LocalDateTime.now();
+    LocalDateTime created;
 
-    Boolean resolved = false;
+    Boolean resolved;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemRequest that = (ItemRequest) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
