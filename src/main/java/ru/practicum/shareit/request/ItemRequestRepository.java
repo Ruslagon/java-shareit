@@ -20,5 +20,6 @@ public interface ItemRequestRepository {
     List<ItemRequest> search(String text);
 
     void delete(Long requestId);
+
     List<Long> deleteByUserIdAndGetDeletedIds(Long userId);
 }

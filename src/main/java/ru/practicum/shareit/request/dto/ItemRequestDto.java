@@ -10,7 +10,8 @@ import java.util.Objects;
 /**
  * TODO Sprint add-item-requests.
  */
-@Data@Getter
+@Data
+@Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor

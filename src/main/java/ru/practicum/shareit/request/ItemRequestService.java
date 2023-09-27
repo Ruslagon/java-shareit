@@ -25,21 +25,22 @@ public class ItemRequestService {
 
     public ItemRequestDto add(Long userId, ItemRequestDto request) {
         userRepository.containsById(userId);
-        return DtoRequestMapper.ItemRequestToDto(itemRequestRepository.add(userId, DtoRequestMapper.DtoToItemRequest(request)));
+        return DtoRequestMapper.itemRequestToDto(itemRequestRepository.add(userId, DtoRequestMapper.dtoToItemRequest(request)));
     }
 
     public ItemRequestDto update(Long userId, ItemRequestDto requestDto, Long requestId) {
         userRepository.containsById(userId);
         containsSameOwner(userId, requestId);
-        return DtoRequestMapper.ItemRequestToDto(itemRequestRepository.update(DtoRequestMapper.DtoToItemRequest(requestDto), requestId));
+        return DtoRequestMapper.itemRequestToDto(itemRequestRepository.update(DtoRequestMapper.dtoToItemRequest(requestDto), requestId));
     }
+
     public void containsSameOwner(Long userId, Long requestId) {
         itemRequestRepository.containsSameOwner(userId, requestId);
     }
 
     public List<ItemRequestDto> getAllForUser(Long userId) {
         userRepository.containsById(userId);
-        return itemRequestRepository.getAllForUser(userId).stream().map(DtoRequestMapper::ItemRequestToDto).collect(Collectors.toList());
+        return itemRequestRepository.getAllForUser(userId).stream().map(DtoRequestMapper::itemRequestToDto).collect(Collectors.toList());
     }
 
     public ItemRequestDto getOne(Long userId, Long requestId) {

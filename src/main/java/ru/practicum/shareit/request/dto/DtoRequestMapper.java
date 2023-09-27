@@ -4,7 +4,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 
 public class DtoRequestMapper {
 
-    public static ItemRequest DtoToItemRequest(ItemRequestDto itemRequestDto) {
+    public static ItemRequest dtoToItemRequest(ItemRequestDto itemRequestDto) {
         ItemRequest itemRequest = new ItemRequest();
         itemRequest.setId(itemRequestDto.getId());
         itemRequest.setCreated(itemRequestDto.getCreated());
@@ -14,7 +14,7 @@ public class DtoRequestMapper {
         return itemRequest;
     }
 
-    public static ItemRequestDto ItemRequestToDto(ItemRequest itemRequest) {
+    public static ItemRequestDto itemRequestToDto(ItemRequest itemRequest) {
         ItemRequestDto itemRequestDto = new ItemRequestDto();
         itemRequestDto.setId(itemRequest.getId());
         itemRequestDto.setCreated(itemRequest.getCreated());

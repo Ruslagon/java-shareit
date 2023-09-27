@@ -33,20 +33,21 @@ public class ItemService {
         if (itemDto.getRequestId() != null) {
             itemRequestRepository.containsById(itemDto.getRequestId());
         }
-        return DtoItemMapper.ItemToDto(itemRepository.add(userId, DtoItemMapper.DtoToItem(itemDto)));
+        return DtoItemMapper.itemToDto(itemRepository.add(userId, DtoItemMapper.dtoToItem(itemDto)));
     }
 
     public ItemDto update(Long userId, ItemDto itemDto, Long itemId) {
         containsSameOwner(userId, itemId);
-        return DtoItemMapper.ItemToDto(itemRepository.update(DtoItemMapper.DtoToItem(itemDto), itemId));
+        return DtoItemMapper.itemToDto(itemRepository.update(DtoItemMapper.dtoToItem(itemDto), itemId));
     }
+
     public void containsSameOwner(Long userId, Long itemId) {
         itemRepository.containsSameOwner(userId, itemId);
     }
 
     public List<ItemDto> getAllForUser(Long userId) {
         userRepository.containsById(userId);
-        return itemRepository.getAllForUser(userId).stream().map(DtoItemMapper::ItemToDto).collect(Collectors.toList());
+        return itemRepository.getAllForUser(userId).stream().map(DtoItemMapper::itemToDto).collect(Collectors.toList());
     }
 
     public ItemDto getOne(Long userId, Long itemId) {

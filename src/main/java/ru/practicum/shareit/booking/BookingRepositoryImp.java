@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 public class BookingRepositoryImp implements BookingRepository {
     private final Map<Long, Booking> bookingsMap = new HashMap<>();
-    private final Map<Long ,Review> reviewsMap = new HashMap<>();
+    private final Map<Long, Review> reviewsMap = new HashMap<>();
     private Long globalId = 1L;
 
     @Override

@@ -27,6 +27,7 @@ public interface BookingRepository {
     void deleteReview(Long requesterId, Long reviewId);
 
     List<Review> getReviewsForItem(Long itemId);
+
     void deleteByUserId(Long userId);
 
     void deleteByItemId(Long itemId);

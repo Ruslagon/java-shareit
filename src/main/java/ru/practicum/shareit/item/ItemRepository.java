@@ -23,6 +23,8 @@ public interface ItemRepository {
     void containsById(Long itemId);
 
     Item getOne(Long itemId);
+
     void clearFromDeletedRequests(List<Long> reqIds);
+
     void deleteByUserId(Long userId);
 }

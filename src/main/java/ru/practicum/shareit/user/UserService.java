@@ -30,7 +30,7 @@ public class UserService {
         if (userRepository.containsEmail(userToAdd.getEmail())) {
             throw new ConflictException("email - " + userToAdd.getEmail() + ", уже занят");
         }
-        return DtoUserMapper.UserToDto(userRepository.add(DtoUserMapper.DtoToUser(userToAdd)));
+        return DtoUserMapper.userToDto(userRepository.add(DtoUserMapper.dtoToUser(userToAdd)));
     }
 
     public UserDto update(UserDto userToUpdate, Long userId) {
@@ -38,16 +38,16 @@ public class UserService {
         if (userToUpdate.getEmail() != null) {
             userRepository.containsEmailForUpdate(userToUpdate.getEmail(), userId);
         }
-        return DtoUserMapper.UserToDto(userRepository.update(DtoUserMapper.DtoToUser(userToUpdate), userId));
+        return DtoUserMapper.userToDto(userRepository.update(DtoUserMapper.dtoToUser(userToUpdate), userId));
     }
 
     public List<UserDto> getAll() {
-        return userRepository.getAll().stream().map(DtoUserMapper::UserToDto).collect(Collectors.toList());
+        return userRepository.getAll().stream().map(DtoUserMapper::userToDto).collect(Collectors.toList());
     }
 
     public UserDto getOne(Long userId) {
         containsById(userId);
-        return DtoUserMapper.UserToDto(userRepository.getUser(userId));
+        return DtoUserMapper.userToDto(userRepository.getUser(userId));
     }
 
     public void delete(Long userId) {
