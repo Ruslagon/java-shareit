@@ -62,4 +62,13 @@ public class ErrorHandler {
                 .collect(Collectors.toList());
         return new ValidationErrorResponse(violations);
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleThrowable(final Throwable e) {
+        log.debug("Получен статус 500 INTERNAL_SERVER_ERROR {}", e.getMessage(), e);
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
 }
