@@ -17,7 +17,7 @@ public class ItemRepositoryImp implements ItemRepository {
 
     @Override
     public Item add(Long userId, Item item) {
-        item.setOwnerId(userId);
+        //item.setOwnerId(userId);
         item.setId(globalId);
         itemsMap.put(globalId, item);
         globalId++;
@@ -47,7 +47,8 @@ public class ItemRepositoryImp implements ItemRepository {
 
     @Override
     public List<Item> getAllForUser(Long userId) {
-        return itemsMap.values().stream().filter(item -> item.getOwnerId().equals(userId)).collect(Collectors.toList());
+        //return itemsMap.values().stream().filter(item -> item.getOwnerId().equals(userId)).collect(Collectors.toList());
+    return null;
     }
 
     @Override
@@ -57,10 +58,10 @@ public class ItemRepositoryImp implements ItemRepository {
 
     @Override
     public void containsSameOwner(Long userId, Long itemId) {
-        Long ownerId = getOne(itemId).getOwnerId();
-        if (!ownerId.equals(userId)) {
-            throw new EntityNotFoundException("user - " + userId + " не владеет item - " + itemId);
-        }
+        //Long ownerId = getOne(itemId).getOwnerId();
+//        if (!ownerId.equals(userId)) {
+//            throw new EntityNotFoundException("user - " + userId + " не владеет item - " + itemId);
+//        }
     }
 
     @Override
@@ -94,6 +95,6 @@ public class ItemRepositoryImp implements ItemRepository {
 
     @Override
     public void deleteByUserId(Long userId) {
-        itemsMap.values().removeIf(item -> item.getOwnerId().equals(userId));
+        //itemsMap.values().removeIf(item -> item.getOwnerId().equals(userId));
     }
 }

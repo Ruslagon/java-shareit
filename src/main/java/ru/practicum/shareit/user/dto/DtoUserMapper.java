@@ -1,5 +1,7 @@
 package ru.practicum.shareit.user.dto;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import ru.practicum.shareit.user.model.User;
 
 public class DtoUserMapper {
@@ -19,4 +21,24 @@ public class DtoUserMapper {
         userDto.setEmail(user.getEmail());
         return userDto;
     }
+
+    public static User updateUserFromDto(UserDto userDto, User user) {
+        if ( userDto == null ) {
+            return user;
+        }
+
+        if ( userDto.getId() != null ) {
+            user.setId( userDto.getId() );
+        }
+        if ( userDto.getName() != null ) {
+            user.setName( userDto.getName() );
+        }
+        if ( userDto.getEmail() != null ) {
+            user.setEmail( userDto.getEmail() );
+        }
+
+        return user;
+    }
+
+
 }

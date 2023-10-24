@@ -34,7 +34,7 @@ public class BookingService {
             throw new ConflictException("предмет заблокирован. itemId - " + itemId);
         }
 
-        booking.setItemOwnerId(item.getOwnerId());
+        //booking.setItemOwnerId(item.getOwnerId());
         checkBookingTime(booking);
         return DtoBookingMapper.bookingToDto(bookingRepository.add(userId, itemId, DtoBookingMapper.dtoToBooking(booking)));
     }
@@ -57,7 +57,7 @@ public class BookingService {
 
     public BookingDto getOne(Long userId, Long bookingId) {
         userRepository.containsById(userId);
-        return DtoBookingMapper.bookingToDtoWithoutUsers(bookingRepository.getOne(bookingId));
+        return DtoBookingMapper.bookingToDtoWithoutItems(bookingRepository.getOne(bookingId));
     }
 
     public List<BookingDto> getByItemIdAndStatus(Long itemId, BookingStatus status) {

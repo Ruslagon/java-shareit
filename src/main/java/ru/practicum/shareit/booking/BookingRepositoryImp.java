@@ -23,8 +23,8 @@ public class BookingRepositoryImp implements BookingRepository {
     public Booking add(Long userId, Long itemId, Booking booking) {
         booking.setId(globalId);
 
-        booking.setItemId(itemId);
-        booking.setBookerId(userId);
+//        booking.setItemId(itemId);
+//        booking.setBookerId(userId);
         booking.setStatus(BookingStatus.WAITING);
 
         checkConflictTime(itemId,booking);
@@ -36,9 +36,9 @@ public class BookingRepositoryImp implements BookingRepository {
     @Override
     public Booking update(Long userId, Long bookingId, Booking booking) {
         Booking oldBooking = getBooking(bookingId);
-        if (!oldBooking.getItemOwnerId().equals(userId)) {
-            throw new ValidationException("юзер не является владельцем предмета");
-        }
+//        if (!oldBooking.getItemOwnerId().equals(userId)) {
+//            throw new ValidationException("юзер не является владельцем предмета");
+//        }
         if (booking.getStatus() != null) {
             oldBooking.setStatus(booking.getStatus());
         }
@@ -54,15 +54,16 @@ public class BookingRepositoryImp implements BookingRepository {
 
     @Override
     public void delete(Long requesterId, Long bookingId) {
-        if (bookingsMap.get(bookingId).getBookerId().equals(requesterId)) {
-            bookingsMap.remove(bookingId);
-        }
+//        if (bookingsMap.get(bookingId).getBookerId().equals(requesterId)) {
+//            bookingsMap.remove(bookingId);
+//        }
         reviewsMap.values().removeIf(review -> review.getBookingId().equals(bookingId) && review.getClientId().equals(requesterId));
     }
 
     @Override
     public List<Booking> getUsersBookings(Long ownerId) {
-        return bookingsMap.values().stream().filter(booking -> booking.getItemOwnerId().equals(ownerId)).collect(Collectors.toList());
+        return null;
+//                bookingsMap.values().stream().filter(booking -> booking.getItemOwnerId().equals(ownerId)).collect(Collectors.toList());
     }
 
     @Override
@@ -72,13 +73,14 @@ public class BookingRepositoryImp implements BookingRepository {
 
     @Override
     public List<Booking> getByItemIdAndStatus(Long itemId, BookingStatus status) {
-        return bookingsMap.values().stream().filter(booking -> {
-            if (status == null) {
-                return booking.getItemId().equals(itemId);
-            } else {
-                return (booking.getItemId().equals(itemId) && booking.getStatus().equals(status));
-            }
-            }).collect(Collectors.toList());
+//        return bookingsMap.values().stream().filter(booking -> {
+//            if (status == null) {
+//                return booking.getItemId().equals(itemId);
+//            } else {
+//                return (booking.getItemId().equals(itemId) && booking.getStatus().equals(status));
+//            }
+//            }).collect(Collectors.toList());
+        return null;
     }
 
     @Override
@@ -89,7 +91,7 @@ public class BookingRepositoryImp implements BookingRepository {
         review.setId(bookingId);
         review.setBookingId(bookingId);
         review.setClientId(requesterId);
-        review.setReviewedItemId(booking.getItemId());
+//        review.setReviewedItemId(booking.getItemId());
         reviewsMap.put(bookingId, review);
         return review;
     }
@@ -123,22 +125,22 @@ public class BookingRepositoryImp implements BookingRepository {
 
     @Override
     public void deleteByUserId(Long userId) {
-        for (Booking booking : bookingsMap.values()) {
-            if (booking.getBookerId().equals(userId) || booking.getItemOwnerId().equals(userId)) {
-                reviewsMap.remove(booking.getId());
-                bookingsMap.remove(booking.getId());
-            }
-        }
+//        for (Booking booking : bookingsMap.values()) {
+//            if (booking.getBookerId().equals(userId) || booking.getItemOwnerId().equals(userId)) {
+//                reviewsMap.remove(booking.getId());
+//                bookingsMap.remove(booking.getId());
+//            }
+//        }
     }
 
     @Override
     public void deleteByItemId(Long itemId) {
-        for (Booking booking : bookingsMap.values()) {
-            if (booking.getItemId().equals(itemId)) {
-                reviewsMap.remove(booking.getId());
-                bookingsMap.remove(booking.getId());
-            }
-        }
+//        for (Booking booking : bookingsMap.values()) {
+//            if (booking.getItemId().equals(itemId)) {
+//                reviewsMap.remove(booking.getId());
+//                bookingsMap.remove(booking.getId());
+//            }
+//        }
     }
 
     private Review getReview(Long bookingId) {
@@ -149,29 +151,29 @@ public class BookingRepositoryImp implements BookingRepository {
     }
 
     private void checkBooking(Booking booking, Long requesterId) {
-        if (!booking.getBookerId().equals(requesterId)) {
-            throw new ValidationException("пользователь не является заказчиком");
-        }
+//        if (!booking.getBookerId().equals(requesterId)) {
+//            throw new ValidationException("пользователь не является заказчиком");
+//        }
     }
 
     private void checkConflictTime(Long itemId, Booking booking) {
         var newStart = booking.getStart();
         var newEnd = booking.getEnd();
-        for (Booking oldBooking : bookingsMap.values()) {
-            if (oldBooking.getItemId().equals(itemId) && oldBooking.getStatus().equals(BookingStatus.APPROVED)) {
-                var oldStart = oldBooking.getStart();
-                var oldEnd = oldBooking.getEnd();
-
-                if (oldStart.isBefore(newStart) && oldEnd.isAfter(newStart)) {
-                    throw new ConflictException("время занято");
-                }
-                if (oldStart.isBefore(newEnd) && oldEnd.isAfter(newEnd)) {
-                    throw new ConflictException("время занято");
-                }
-                if (newStart.isBefore(oldStart) && newEnd.isAfter(oldEnd)) {
-                    throw new ConflictException("время занято");
-                }
-            }
-        }
+//        for (Booking oldBooking : bookingsMap.values()) {
+//            if (oldBooking.getItemId().equals(itemId) && oldBooking.getStatus().equals(BookingStatus.APPROVED)) {
+//                var oldStart = oldBooking.getStart();
+//                var oldEnd = oldBooking.getEnd();
+//
+//                if (oldStart.isBefore(newStart) && oldEnd.isAfter(newStart)) {
+//                    throw new ConflictException("время занято");
+//                }
+//                if (oldStart.isBefore(newEnd) && oldEnd.isAfter(newEnd)) {
+//                    throw new ConflictException("время занято");
+//                }
+//                if (newStart.isBefore(oldStart) && newEnd.isAfter(oldEnd)) {
+//                    throw new ConflictException("время занято");
+//                }
+//            }
+//        }
     }
 }
