@@ -1,44 +1,35 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import ru.practicum.shareit.validation.Marker;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ItemDto {
+public class UserDto {
     private Long id;
-
-    private Long ownerId;
-
-    private Long requestId;
-
-    @NotBlank(groups = Marker.OnCreate.class)
+    @NotEmpty(groups = Marker.OnCreate.class)
     private String name;
 
-    @NotBlank(groups = Marker.OnCreate.class)
-    private String description;
-
     @NotNull(groups = Marker.OnCreate.class)
-    private Boolean available;
+    @Email(groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
+    private String email;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemDto itemDto = (ItemDto) o;
-        return Objects.equals(id, itemDto.id);
+        UserDto userDto = (UserDto) o;
+        return Objects.equals(id, userDto.id);
     }
 
     @Override

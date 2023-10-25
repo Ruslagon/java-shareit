@@ -1,11 +1,10 @@
-package ru.practicum.shareit.booking.dto;
+package ru.practicum.shareit.booking.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.shareit.booking.BookingStatus;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -14,19 +13,13 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
-public class BookingDto {
+public class Booking {
     private Long id;
-    @NotNull
     private Long itemId;
     private Long bookerId;
     private Long itemOwnerId;
-    @Future
     private LocalDateTime start;
-    @Future
     private LocalDateTime end;
     private BookingStatus status;
 
@@ -34,8 +27,8 @@ public class BookingDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BookingDto that = (BookingDto) o;
-        return Objects.equals(id, that.id);
+        Booking booking = (Booking) o;
+        return Objects.equals(id, booking.id);
     }
 
     @Override
