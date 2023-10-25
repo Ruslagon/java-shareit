@@ -21,18 +21,18 @@ public class DtoUserMapper {
     }
 
     public static User updateUserFromDto(UserDto userDto, User user) {
-        if ( userDto == null ) {
+        if (userDto == null) {
             return user;
         }
 
-        if ( userDto.getId() != null ) {
-            user.setId( userDto.getId() );
+        if (userDto.getId() != null) {
+            user.setId(userDto.getId());
         }
-        if ( userDto.getName() != null ) {
-            user.setName( userDto.getName() );
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
         }
-        if ( userDto.getEmail() != null ) {
-            user.setEmail( userDto.getEmail() );
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
         }
 
         return user;

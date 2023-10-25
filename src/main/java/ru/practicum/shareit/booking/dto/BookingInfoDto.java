@@ -9,7 +9,9 @@ import ru.practicum.shareit.user.model.UserInfoId;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class BookingInfoDto {
     private Long id;
     private Long itemId;

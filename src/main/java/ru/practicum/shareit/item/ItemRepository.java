@@ -21,8 +21,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "and ow.id = ?2 ")
     Optional<Item> findByIdAndWithUser(Long itemId, Long userId);
 
-    Optional<Item> findByIdAndOwnerId(Long itemId, Long userId);
-
     Page<Item> findAllByOwnerId(Long userId, PageRequest pageRequest);
 
     Page<Item> findAllByNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndAvailableTrue(String text, String sameText, PageRequest pageRequest);
@@ -41,6 +39,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("select it " +
             "from Item as it " +
-            "where it.id = ?1 " )
+            "where it.id = ?1 ")
     Optional<ItemInfo> findByIdWithComments(Long id);
 }

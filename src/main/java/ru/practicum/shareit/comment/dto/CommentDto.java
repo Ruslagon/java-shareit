@@ -10,7 +10,9 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString @Getter @Setter
+@ToString
+@Getter
+@Setter
 public class CommentDto {
     Long id;
     @NotBlank

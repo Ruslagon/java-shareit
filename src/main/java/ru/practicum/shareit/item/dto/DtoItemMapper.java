@@ -49,21 +49,21 @@ public class DtoItemMapper {
     }
 
     public static Item updateItemFromDto(ItemDto itemDto, Item item) {
-        if ( itemDto == null ) {
+        if (itemDto == null) {
             return item;
         }
 
-        if ( itemDto.getRequestId() != null ) {
-            item.setRequestId( itemDto.getRequestId() );
+        if (itemDto.getRequestId() != null) {
+            item.setRequestId(itemDto.getRequestId());
         }
-        if ( itemDto.getName() != null ) {
-            item.setName( itemDto.getName() );
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
         }
-        if ( itemDto.getDescription() != null ) {
-            item.setDescription( itemDto.getDescription() );
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
         }
-        if ( itemDto.getAvailable() != null ) {
-            item.setAvailable( itemDto.getAvailable() );
+        if (itemDto.getAvailable() != null) {
+            item.setAvailable(itemDto.getAvailable());
         }
 
         return item;

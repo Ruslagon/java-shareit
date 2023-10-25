@@ -78,7 +78,7 @@ public class ItemService {
             return itemInfoDto;
         }
         var dtoInfo = DtoItemMapper.itemInfoToDtoWithoutUsers(itemRepository.findByIdWithComments(itemId)
-                .orElseThrow(() ->new EntityNotFoundException("item по id - " + itemId + " не найден2")));
+                .orElseThrow(() -> new EntityNotFoundException("item по id - " + itemId + " не найден2")));
         return dtoInfo;
     }
 
@@ -100,7 +100,7 @@ public class ItemService {
         comment.setAuthor(userRepository.findById(userId)
                 .orElseThrow(() -> new BadRequest("user по id - " + userId + " не найден")));
         comment.setItem(itemRepository.findByIdAndHaveBookingsByUserId(itemId, userId, BookingStatus.APPROVED, now)
-                .orElseThrow(() ->new BadRequest("item по id - " + itemId + " не найден")));
+                .orElseThrow(() -> new BadRequest("item по id - " + itemId + " не найден")));
         comment = commentRepository.save(comment);
         return commentRepository.findByIdAndAuthorId(comment.getId(), userId);
     }
