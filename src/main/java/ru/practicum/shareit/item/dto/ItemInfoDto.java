@@ -5,10 +5,7 @@ import lombok.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.comment.dto.CommentTest;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validation.Marker;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 

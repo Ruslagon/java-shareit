@@ -1,6 +1,12 @@
 package ru.practicum.shareit.item.model;
 
-public interface ItemBookingsInfo {
-    Long getId();
-    String getName();
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@Getter @Setter
+public class ItemBookingsInfo {
+    private Long id;
+    private String name;
 }

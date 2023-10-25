@@ -1,64 +1,52 @@
 package ru.practicum.shareit.user;
 
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.exception.ConflictException;
-import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.request.ItemRequestRepository;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.user.dto.DtoUserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
+@AllArgsConstructor
 public class UserService {
+    @Autowired
     private final UserRepository userRepository;
-    private final ItemRepository itemRepository;
-    private final ItemRequestRepository itemRequestRepository;
-    private final BookingRepository bookingRepository;
 
-    public UserService(UserRepository userRepository, ItemRepository itemRepository,
-                       ItemRequestRepository itemRequestRepository, BookingRepository bookingRepository) {
-        this.userRepository = userRepository;
-        this.itemRepository = itemRepository;
-        this.itemRequestRepository = itemRequestRepository;
-        this.bookingRepository = bookingRepository;
-    }
-
+    @Transactional
     public UserDto add(UserDto userToAdd) {
-        if (userRepository.containsEmail(userToAdd.getEmail())) {
-            throw new ConflictException("email - " + userToAdd.getEmail() + ", уже занят");
-        }
-        return DtoUserMapper.userToDto(userRepository.add(DtoUserMapper.dtoToUser(userToAdd)));
+        userToAdd.setId(null);
+        return DtoUserMapper.userToDto(userRepository.save(DtoUserMapper.dtoToUser(userToAdd)));
     }
 
+    @Transactional
     public UserDto update(UserDto userToUpdate, Long userId) {
-        containsById(userId);
-        if (userToUpdate.getEmail() != null) {
-            userRepository.containsEmailForUpdate(userToUpdate.getEmail(), userId);
-        }
-        return DtoUserMapper.userToDto(userRepository.update(DtoUserMapper.dtoToUser(userToUpdate), userId));
+        userToUpdate.setId(userId);
+        var oldUser = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("user по id - " + userId + " не найден"));
+        DtoUserMapper.updateUserFromDto(userToUpdate, oldUser);
+        return DtoUserMapper.userToDto(userRepository.save(oldUser));
     }
 
     public List<UserDto> getAll() {
-        return userRepository.getAll().stream().map(DtoUserMapper::userToDto).collect(Collectors.toList());
+        PageRequest pageRequest = PageRequest.of(0, 50);
+        return userRepository.findAll(pageRequest).map(DtoUserMapper::userToDto)
+                .getContent();
     }
 
     public UserDto getOne(Long userId) {
-        containsById(userId);
-        return DtoUserMapper.userToDto(userRepository.getUser(userId));
+        return DtoUserMapper.userToDto(userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("user по id - " + userId + " не найден")));
     }
 
+    @Transactional
     public void delete(Long userId) {
-        userRepository.delete(userId);
-        var reqIds = itemRequestRepository.deleteByUserIdAndGetDeletedIds(userId);
-        itemRepository.clearFromDeletedRequests(reqIds);
-        itemRepository.deleteByUserId(userId);
-        bookingRepository.deleteByUserId(userId);
+        userRepository.deleteById(userId);
     }
 
-    public void containsById(Long userId) {
-        userRepository.containsById(userId);
-    }
 }

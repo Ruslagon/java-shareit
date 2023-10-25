@@ -1,34 +1,37 @@
 package ru.practicum.shareit.booking;
 
-import ru.practicum.shareit.booking.dto.ReviewDto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.Review;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
-public interface BookingRepository {
+@Component
+public interface BookingRepository extends JpaRepository<Booking, Long>, QuerydslPredicateExecutor<Booking> {
+    @Query("select book " +
+            "from Booking as book " +
+            "JOIN FETCH book.booker as ber " +
+            "JOIN FETCH book.item as it " +
+            "JOIN it.owner as ow " +
+            "where book.id = ?1 " +
+            "and ber.id = ?2 " +
+            "or book.id = ?1 " +
+            "and ow.id = ?2 ")
+    Optional<Booking> findByIdAndOwnerOrBooker(Long id, Long userId);
 
-    Booking add(Long userId, Long itemId, Booking booking);
+    @Query("select book " +
+            "from Booking as book " +
+            "JOIN FETCH book.booker as ber " +
+            "JOIN FETCH book.item as it " +
+            "JOIN it.owner as ow " +
+            "where book.id = ?1 " +
+            "and ow.id = ?2 ")
+    Optional<Booking> findByIdAndOwnerId(Long id, Long userId);
 
-    Booking update(Long userId, Long itemId, Booking booking);
+    Booking findFirstByItemIdAndStartBeforeOrderByStartDesc(Long itemId, LocalDateTime now);
 
-    void delete(Long requesterId, Long bookingId);
-
-    List<Booking> getUsersBookings(Long ownerId);
-
-    Booking getOne(Long bookingId);
-
-    List<Booking> getByItemIdAndStatus(Long itemId, BookingStatus status);
-
-    Review addReview(Long requesterId, Long bookingId, Review review);
-
-    Review updateReview(Long requesterId, Long bookingId, ReviewDto reviewDto);
-
-    void deleteReview(Long requesterId, Long reviewId);
-
-    List<Review> getReviewsForItem(Long itemId);
-
-    void deleteByUserId(Long userId);
-
-    void deleteByItemId(Long itemId);
+    Booking findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(Long itemId, LocalDateTime now, BookingStatus Status);
 }

@@ -1,7 +1,5 @@
 package ru.practicum.shareit.item.dto;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemInfo;
 
@@ -48,5 +46,26 @@ public class DtoItemMapper {
         itemDto.setRequestId(itemInfo.getRequestId());
         itemDto.setComments(itemInfo.getComments());
         return itemDto;
+    }
+
+    public static Item updateItemFromDto(ItemDto itemDto, Item item) {
+        if ( itemDto == null ) {
+            return item;
+        }
+
+        if ( itemDto.getRequestId() != null ) {
+            item.setRequestId( itemDto.getRequestId() );
+        }
+        if ( itemDto.getName() != null ) {
+            item.setName( itemDto.getName() );
+        }
+        if ( itemDto.getDescription() != null ) {
+            item.setDescription( itemDto.getDescription() );
+        }
+        if ( itemDto.getAvailable() != null ) {
+            item.setAvailable( itemDto.getAvailable() );
+        }
+
+        return item;
     }
 }

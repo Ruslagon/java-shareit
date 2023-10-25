@@ -1,7 +1,5 @@
 package ru.practicum.shareit.user.dto;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 import ru.practicum.shareit.user.model.User;
 
 public class DtoUserMapper {

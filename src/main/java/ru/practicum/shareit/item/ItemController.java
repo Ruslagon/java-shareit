@@ -23,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemController {
 
-    private final ItemService2 itemService;
+    private final ItemService itemService;
 
     @PostMapping
     @Validated({Marker.OnCreate.class})

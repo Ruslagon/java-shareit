@@ -1,5 +1,11 @@
 package ru.practicum.shareit.user.model;
 
-public interface UserInfoId {
-    Long getId();
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@Getter @Setter
+public class UserInfoId {
+    Long Id;
 }
