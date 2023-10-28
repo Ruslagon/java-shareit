@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.querydsl.QSort;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,13 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BookingService {
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
-    BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository;
 
     @Transactional
     public BookingInfoDto add(Long userId, BookingDto bookingDto) {
@@ -45,11 +46,7 @@ public class BookingService {
             throw new EntityNotFoundException("user по id - " + userId + " не найден");
         }
 
-        var booking = DtoBookingMapper.dtoToBooking(bookingDto);
-        booking.setStatus(BookingStatus.WAITING);
-        booking.setItem(item);
-        booking.setBooker(user);
-
+        var booking = DtoBookingMapper.dtoToBooking(bookingDto, item, user);
         return DtoBookingMapper.bookingToDto(bookingRepository.save(booking));
     }
 
@@ -113,6 +110,8 @@ public class BookingService {
     }
 
     public BookingInfoDto getOne(Long userId, Long bookingId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("отсутствует user id=" + userId));
         return DtoBookingMapper.bookingToDto(bookingRepository.findByIdAndOwnerOrBooker(bookingId, userId)
                 .orElseThrow(() -> new EntityNotFoundException("аренда не доступна " + bookingId)));
     }

@@ -1,7 +1,9 @@
 package ru.practicum.shareit.comment.dto;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.comment.model.Comment;
 
+@UtilityClass
 public class DtoCommentMapper {
     public static Comment dtoToItem(CommentDto commentDto) {
         Comment comment = new Comment();
