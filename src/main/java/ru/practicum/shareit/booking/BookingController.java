@@ -20,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingService bookingService;
+
     @PostMapping
     public BookingInfoDto add(@RequestHeader("X-Sharer-User-Id") Long bookerId,
                               @Valid @RequestBody BookingDto bookingDto) {
