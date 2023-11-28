@@ -23,10 +23,11 @@ public class BookingDto {
     @NotNull
     private Long itemId;
     private Long bookerId;
-    private Long itemOwnerId;
     @Future
+    @NotNull
     private LocalDateTime start;
     @Future
+    @NotNull
     private LocalDateTime end;
     private BookingStatus status;
 

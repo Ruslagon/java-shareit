@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.exception.model.BadRequest;
 import ru.practicum.shareit.exception.model.ErrorResponse;
 import ru.practicum.shareit.exception.model.ValidationErrorResponse;
 import ru.practicum.shareit.exception.model.Violation;
@@ -67,6 +68,15 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
         log.debug("Получен статус 500 INTERNAL_SERVER_ERROR {}", e.getMessage(), e);
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse badRequestException(final BadRequest e) {
+        log.debug("Получен статус 400 BAD_REQUEST {}", e.getMessage(), e);
         return new ErrorResponse(
                 e.getMessage()
         );

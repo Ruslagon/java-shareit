@@ -1,30 +1,44 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemInfo;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
-public interface ItemRepository {
+@Component
+public interface ItemRepository extends JpaRepository<Item, Long> {
+    @Query("select it " +
+            "from Item as it " +
+            "JOIN FETCH it.owner as ow " +
+            "where it.id = ?1 " +
+            "and ow.id = ?2 ")
+    Optional<Item> findByIdAndWithUser(Long itemId, Long userId);
 
-    Item add(Long userId, Item item);
+    Page<Item> findAllByOwnerId(Long userId, PageRequest pageRequest);
 
-    Item update(Item item, Long itemId);
+    Page<Item> findAllByNameIgnoreCaseContainingOrDescriptionIgnoreCaseContainingAndAvailableTrue(String text, String sameText, PageRequest pageRequest);
 
-    List<Item> getAllForUser(Long userId);
+    @Query("select it " +
+            "from Item as it " +
+            "JOIN it.bookings as booking " +
+            "JOIN booking.booker as booker " +
+            "where it.id = ?1 " +
+            "and booker.id = ?2 " +
+            "and booking.status = ?3 " +
+            "and booking.end < ?4 ")
+    Optional<Item> findByIdAndHaveBookingsByUserId(Long itemId, Long userId, BookingStatus status, LocalDateTime now);
 
-    Item getOneWithoutOwner(Long itemId);
+    Optional<ItemInfo> findByOwnerIdAndId(Long userId, Long itemId);
 
-    List<Item> search(String text);
-
-    void delete(Long itemId);
-
-    void containsSameOwner(Long userId, Long itemId);
-
-    void containsById(Long itemId);
-
-    Item getOne(Long itemId);
-
-    void clearFromDeletedRequests(List<Long> reqIds);
-
-    void deleteByUserId(Long userId);
+    @Query("select it " +
+            "from Item as it " +
+            "where it.id = ?1 ")
+    Optional<ItemInfo> findByIdWithComments(Long id);
 }

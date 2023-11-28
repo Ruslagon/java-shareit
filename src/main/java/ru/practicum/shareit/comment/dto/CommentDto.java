@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request.dto;
+package ru.practicum.shareit.comment.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -7,32 +7,24 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/**
- * TODO Sprint add-item-requests.
- */
-@Data
-@Getter
-@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ItemRequestDto {
+@Getter
+@Setter
+public class CommentDto {
     Long id;
     @NotBlank
-    String description;
-
-    Long requesterId;
-
+    String text;
     LocalDateTime created = LocalDateTime.now();
-
-    Boolean resolved = false;
+    String authorName;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemRequestDto that = (ItemRequestDto) o;
+        CommentDto that = (CommentDto) o;
         return Objects.equals(id, that.id);
     }
 

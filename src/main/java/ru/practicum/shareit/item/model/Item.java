@@ -3,32 +3,52 @@ package ru.practicum.shareit.item.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 /**
  * TODO Sprint add-controllers.
  */
+
+@Entity
+@Table(name = "items")
 @Getter
 @Setter
 @ToString
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long ownerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    @ToString.Exclude
+    private User owner;
 
+    @Column(name = "request_id")
     private Long requestId;
 
-    @NotBlank
+    @Column(nullable = false)
     private String name;
 
-    @NotBlank
+    @Column(nullable = false)
     private String description;
 
-    @NotNull
+    @Column(nullable = false)
     private Boolean available;
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = false, cascade = CascadeType.REMOVE, mappedBy = "item")
+    @Column(nullable = true, insertable = false, updatable = false)
+    private List<Booking> bookings;
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = false, cascade = CascadeType.REMOVE, mappedBy = "item")
+    @Column(nullable = true, insertable = false, updatable = false)
+    private List<Comment> comments;
 
     @Override
     public boolean equals(Object o) {
