@@ -1,7 +1,5 @@
 package ru.practicum.shareit.exception;
 
-import com.mysema.commons.lang.Assert;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.exception.model.ErrorResponse;
 import static org.hamcrest.MatcherAssert.assertThat;

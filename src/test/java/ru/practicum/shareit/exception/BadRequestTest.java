@@ -7,7 +7,9 @@ import ru.practicum.shareit.exception.model.BadRequest;
 public class BadRequestTest {
 
     @Test
-    void BadRequestThrow() {
-        Assertions.assertThrows(BadRequest.class, () -> {throw new BadRequest("bad request");});
+    void badRequestThrow() {
+        Assertions.assertThrows(BadRequest.class, () -> {
+            throw new BadRequest("bad request");
+        });
     }
 }
