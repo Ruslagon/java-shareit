@@ -36,17 +36,17 @@ public class QRequest extends EntityPathBase<Request> {
         this(Request.class, forVariable(variable), INITS);
     }
 
-    public QRequest(Path<? extends Request> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
-    }
-
-    public QRequest(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QRequest(PathMetadata metadata, PathInits inits) {
-        this(Request.class, metadata, inits);
-    }
+//    public QRequest(Path<? extends Request> path) {
+//        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+//    }
+//
+//    public QRequest(PathMetadata metadata) {
+//        this(metadata, PathInits.getFor(metadata, INITS));
+//    }
+//
+//    public QRequest(PathMetadata metadata, PathInits inits) {
+//        this(Request.class, metadata, inits);
+//    }
 
     public QRequest(Class<? extends Request> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exception.EntityNotFoundException;
+import ru.practicum.shareit.exception.model.BadRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest(
@@ -65,6 +70,17 @@ public class BookingServiceTest {
         assertThat(booking.getStatus(), equalTo(bookingInfoDto.getStatus()));
         assertThat(booking.getStart(), equalTo(bookingInfoDto.getStart()));
         assertThat(booking.getEnd(), equalTo(bookingInfoDto.getEnd()));
+
+        assertThrows(EntityNotFoundException.class, () -> service.add(-1L, bookingDto));
+
+        bookingDto.setItemId(-1L);
+        assertThrows(EntityNotFoundException.class, () -> service.add(booker.getId(), bookingDto));
+
+        bookingDto.setItemId(item.getId());
+        bookingDto.setEnd(date.minusYears(4));
+        bookingDto.setStart(date.plusYears(13));
+        assertThrows(BadRequest.class, () -> service.add(booker.getId(), bookingDto));
+
     }
 
     @Test
@@ -214,6 +230,8 @@ public class BookingServiceTest {
                     hasProperty("end", equalTo(booking.getEnd()))
             )));
         }
+
+        assertThrows(BadRequest.class, () -> service.getBookersBookings(booker.getId(), "unknown state", 0, 10));
     }
 
     @Test
@@ -327,5 +345,7 @@ public class BookingServiceTest {
                     hasProperty("end", equalTo(booking.getEnd()))
             )));
         }
+
+        assertThrows(BadRequest.class, () -> service.getOwnersBookings(booker.getId(), "unknown state", 0, 10));
     }
 }

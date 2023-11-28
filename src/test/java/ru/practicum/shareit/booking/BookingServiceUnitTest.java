@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.exception.EntityNotFoundException;
+import ru.practicum.shareit.exception.model.BadRequest;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -14,6 +16,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 public class BookingServiceUnitTest {
@@ -53,6 +56,29 @@ public class BookingServiceUnitTest {
         assertThat(bookingInfoDto.getStatus(), equalTo(BookingStatus.APPROVED));
         assertThat(bookingInfoDto.getStart(), equalTo(booking.getStart()));
         assertThat(bookingInfoDto.getEnd(), equalTo(booking.getEnd()));
+
+        booking.setStatus(BookingStatus.WAITING);
+        bookingInfoDto = bookingService.update(1L, 1L, false);
+
+        assertThat(bookingInfoDto.getId(), equalTo(booking.getId()));
+        assertThat(bookingInfoDto.getBooker().getId(), equalTo(booking.getBooker().getId()));
+        assertThat(bookingInfoDto.getItem().getId(), equalTo(booking.getItem().getId()));
+        assertThat(bookingInfoDto.getStart(), equalTo(booking.getStart()));
+        assertThat(bookingInfoDto.getEnd(), equalTo(booking.getEnd()));
+
+        var booking2 = booking;
+        booking2.setStatus(BookingStatus.APPROVED);
+        Mockito.when(bookingRepository.findByIdAndOwnerId(Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(Optional.of(booking2));
+        assertThrows(BadRequest.class, () -> bookingService.update(1L,1L, true));
+
+        bookingInfoDto = bookingService.update(1L, 1L, false);
+
+        assertThat(bookingInfoDto.getId(), equalTo(booking2.getId()));
+        assertThat(bookingInfoDto.getBooker().getId(), equalTo(booking2.getBooker().getId()));
+        assertThat(bookingInfoDto.getItem().getId(), equalTo(booking2.getItem().getId()));
+        assertThat(bookingInfoDto.getStart(), equalTo(booking2.getStart()));
+        assertThat(bookingInfoDto.getEnd(), equalTo(booking2.getEnd()));
     }
 
     @Test

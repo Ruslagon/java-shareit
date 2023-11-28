@@ -9,13 +9,19 @@ import org.springframework.data.projection.ProjectionFactory;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.comment.dto.CommentTest;
+import ru.practicum.shareit.item.dto.DtoItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemInfoRequest;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
@@ -74,5 +80,20 @@ public class ItemDtoJsonTest {
         assertThat(result).extractingJsonPathNumberValue("$.requestId").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.comments.[0].authorName").contains(commentTest.getAuthorName());
         assertThat(result).extractingJsonPathStringValue("$.comments.[1].authorName").contains(commentTest2.getAuthorName());
+    }
+
+    @Test
+    void itemDtoMapper() {
+
+        Item item = Item.builder().id(1L).request(Request.builder().id(2L).build()).description("item for mapTest")
+                .name("test item").available(true).build();
+
+        ItemInfoRequest itemOutput = DtoItemMapper.itemForRequest(item);
+
+        assertThat(itemOutput.getId(), equalTo(item.getId()));
+        assertThat(itemOutput.getRequestId(), equalTo(item.getRequest().getId()));
+        assertThat(itemOutput.getDescription(), equalTo(item.getDescription()));
+        assertThat(itemOutput.getName(), equalTo(item.getName()));
+        assertThat(itemOutput.getAvailable(), equalTo(item.getAvailable()));
     }
 }

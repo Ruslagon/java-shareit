@@ -29,9 +29,9 @@ public class QUser extends EntityPathBase<User> {
         super(User.class, forVariable(variable));
     }
 
-    public QUser(Path<? extends User> path) {
-        super(path.getType(), path.getMetadata());
-    }
+//    public QUser(Path<? extends User> path) {
+//        super(path.getType(), path.getMetadata());
+//    }
 
     public QUser(PathMetadata metadata) {
         super(User.class, metadata);

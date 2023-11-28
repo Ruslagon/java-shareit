@@ -38,13 +38,13 @@ public class QItem extends EntityPathBase<Item> {
         this(Item.class, forVariable(variable), INITS);
     }
 
-    public QItem(Path<? extends Item> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
-    }
-
-    public QItem(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
+//    public QItem(Path<? extends Item> path) {
+//        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+//    }
+//
+//    public QItem(PathMetadata metadata) {
+//        this(metadata, PathInits.getFor(metadata, INITS));
+//    }
 
     public QItem(PathMetadata metadata, PathInits inits) {
         this(Item.class, metadata, inits);

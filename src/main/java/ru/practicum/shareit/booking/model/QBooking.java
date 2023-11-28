@@ -38,17 +38,17 @@ public class QBooking extends EntityPathBase<Booking> {
         this(Booking.class, forVariable(variable), INITS);
     }
 
-    public QBooking(Path<? extends Booking> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
-    }
-
-    public QBooking(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QBooking(PathMetadata metadata, PathInits inits) {
-        this(Booking.class, metadata, inits);
-    }
+//    public QBooking(Path<? extends Booking> path) {
+//        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+//    }
+//
+//    public QBooking(PathMetadata metadata) {
+//        this(metadata, PathInits.getFor(metadata, INITS));
+//    }
+//
+//    public QBooking(PathMetadata metadata, PathInits inits) {
+//        this(Booking.class, metadata, inits);
+//    }
 
     public QBooking(Class<? extends Booking> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);

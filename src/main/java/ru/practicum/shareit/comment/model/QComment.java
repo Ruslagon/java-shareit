@@ -36,17 +36,17 @@ public class QComment extends EntityPathBase<Comment> {
         this(Comment.class, forVariable(variable), INITS);
     }
 
-    public QComment(Path<? extends Comment> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
-    }
-
-    public QComment(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QComment(PathMetadata metadata, PathInits inits) {
-        this(Comment.class, metadata, inits);
-    }
+//    public QComment(Path<? extends Comment> path) {
+//        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+//    }
+//
+//    public QComment(PathMetadata metadata) {
+//        this(metadata, PathInits.getFor(metadata, INITS));
+//    }
+//
+//    public QComment(PathMetadata metadata, PathInits inits) {
+//        this(Comment.class, metadata, inits);
+//    }
 
     public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);

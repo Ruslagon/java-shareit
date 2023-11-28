@@ -11,5 +11,6 @@ public class QCommentTest {
         qComment.item.id.eq(1L);
         qComment.text.toLowerCase();
         qComment.id.eq(21L);
+
     }
 }
