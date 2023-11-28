@@ -18,11 +18,12 @@ import java.util.Objects;
  */
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto {
     private Long id;
 

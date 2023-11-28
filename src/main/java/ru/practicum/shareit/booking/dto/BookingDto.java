@@ -15,9 +15,10 @@ import java.util.Objects;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookingDto {
     private Long id;
     @NotNull

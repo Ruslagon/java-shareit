@@ -18,6 +18,8 @@ import ru.practicum.shareit.item.dto.DtoItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.item.model.ItemInfo;
+import ru.practicum.shareit.request.RequestRepository;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -35,12 +37,21 @@ public class ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
+    private final RequestRepository requestRepository;
+
     @Transactional
     public ItemDto add(Long userId, ItemDto itemDto) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("user по id - " + userId + " не найден"));
+        Request request;
+        if (itemDto.getRequestId() != null) {
+            request = requestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new EntityNotFoundException("request по id - " + itemDto.getRequestId() + " не найден"));
+        } else {
+            request = null;
+        }
         itemDto.setOwner(user);
-        return DtoItemMapper.itemToDto(itemRepository.save(DtoItemMapper.dtoToItem(itemDto)));
+        return DtoItemMapper.itemToDto(itemRepository.save(DtoItemMapper.dtoToItem(itemDto, request)));
     }
 
     @Transactional
@@ -51,9 +62,9 @@ public class ItemService {
         return DtoItemMapper.itemToDto(itemRepository.save(DtoItemMapper.updateItemFromDto(itemDto, item)));
     }
 
-    public List<ItemDto> getAllForUser(Long userId) {
+    public List<ItemDto> getAllForUser(Long userId, Integer from, Integer size) {
         LocalDateTime now = LocalDateTime.now();
-        PageRequest pageRequest = PageRequest.of(0, 50);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
         userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("user по id - " + userId + " не найден"));
         return itemRepository.findAllByOwnerId(userId, pageRequest).stream().map(DtoItemMapper::itemToDtoWithoutUsers).peek(itemDto -> {
@@ -82,8 +93,8 @@ public class ItemService {
         return dtoInfo;
     }
 
-    public List<ItemDto> search(Long userId, String text) {
-        PageRequest pageRequest = PageRequest.of(0, 50);
+    public List<ItemDto> search(Long userId, String text, Integer from, Integer size) {
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
         userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("user по id - " + userId + " не найден"));
         if (text.isBlank()) {

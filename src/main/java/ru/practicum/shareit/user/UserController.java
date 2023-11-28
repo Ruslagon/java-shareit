@@ -8,6 +8,8 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -38,9 +40,10 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getAll() {
+    public List<UserDto> getAll(@RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                @RequestParam(defaultValue = "50") @Positive Integer size) {
         log.info("получить всех юзеров");
-        return userService.getAll();
+        return userService.getAll(from, size);
     }
 
     @GetMapping("/{userId}")

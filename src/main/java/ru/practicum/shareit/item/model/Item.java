@@ -1,9 +1,8 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.user.model.User;
 
@@ -20,6 +19,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +32,13 @@ public class Item {
     @ToString.Exclude
     private User owner;
 
-    @Column(name = "request_id")
-    private Long requestId;
+//    @Column(name = "request_id")
+//    private Long requestId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
+    @ToString.Exclude
+    private Request request;
 
     @Column(nullable = false)
     private String name;

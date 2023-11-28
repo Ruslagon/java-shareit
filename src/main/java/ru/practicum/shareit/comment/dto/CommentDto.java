@@ -8,11 +8,12 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommentDto {
     Long id;
     @NotBlank

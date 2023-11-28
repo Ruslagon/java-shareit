@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.dto.ItemInfoDto;
 import ru.practicum.shareit.validation.Marker;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -42,9 +44,11 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAllForUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAllForUser(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                       @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                       @RequestParam(defaultValue = "50") @Positive Integer size) {
         log.info("получить все предметы для пользователя userId={}", userId);
-        return itemService.getAllForUser(userId);
+        return itemService.getAllForUser(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -54,9 +58,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam String text) {
+    public List<ItemDto> search(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam String text,
+                                @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                @RequestParam(defaultValue = "50") @Positive Integer size) {
         log.info("получить предметы по тексту={}", text);
-        return itemService.search(userId, text);
+        return itemService.search(userId, text, from, size);
     }
 
     @DeleteMapping("/{itemId}")

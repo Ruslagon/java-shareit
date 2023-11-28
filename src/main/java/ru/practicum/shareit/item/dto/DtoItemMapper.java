@@ -3,25 +3,31 @@ package ru.practicum.shareit.item.dto;
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemInfo;
+import ru.practicum.shareit.item.model.ItemInfoRequest;
+import ru.practicum.shareit.request.model.Request;
 
 @UtilityClass
 public class DtoItemMapper {
 
-    public static Item dtoToItem(ItemDto itemDto) {
+    public static Item dtoToItem(ItemDto itemDto, Request request) {
         Item item = new Item();
         item.setId(itemDto.getId());
-        item.setRequestId(itemDto.getRequestId());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
         item.setName(itemDto.getName());
         item.setOwner(itemDto.getOwner());
+        item.setRequest(request);
         return item;
     }
 
     public static ItemDto itemToDto(Item item) {
         ItemDto itemDto = new ItemDto();
         itemDto.setId(item.getId());
-        itemDto.setRequestId(item.getRequestId());
+        if (item.getRequest() == null) {
+            itemDto.setRequestId(null);
+        } else {
+            itemDto.setRequestId(item.getRequest().getId());
+        }
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
         itemDto.setName(item.getName());
@@ -35,7 +41,11 @@ public class DtoItemMapper {
         itemDto.setName(item.getName());
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
-        itemDto.setRequestId(item.getRequestId());
+        if (item.getRequest() == null) {
+            itemDto.setRequestId(null);
+        } else {
+            itemDto.setRequestId(item.getRequest().getId());
+        }
         return itemDto;
     }
 
@@ -45,7 +55,9 @@ public class DtoItemMapper {
         itemDto.setName(itemInfo.getName());
         itemDto.setDescription(itemInfo.getDescription());
         itemDto.setAvailable(itemInfo.getAvailable());
-        itemDto.setRequestId(itemInfo.getRequestId());
+        if (itemInfo.getRequest() != null) {
+            itemDto.setRequestId(itemInfo.getRequest().getId());
+        }
         itemDto.setComments(itemInfo.getComments());
         return itemDto;
     }
@@ -55,9 +67,6 @@ public class DtoItemMapper {
             return item;
         }
 
-        if (itemDto.getRequestId() != null) {
-            item.setRequestId(itemDto.getRequestId());
-        }
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
         }
@@ -69,5 +78,14 @@ public class DtoItemMapper {
         }
 
         return item;
+    }
+
+    public static ItemInfoRequest itemForRequest(Item item) {
+        return ItemInfoRequest.builder()
+                .id(item.getId())
+                .requestId(item.getRequest().getId())
+                .description(item.getDescription())
+                .name(item.getName())
+                .available(item.getAvailable()).build();
     }
 }
