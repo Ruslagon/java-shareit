@@ -71,7 +71,7 @@ public class CommentRepositoryTest {
     }
 
     @Test
-    void TestFindByIdAndAuthorId() {
+    void testFindByIdAndAuthorId() {
         User user = User.builder().email("1234@mail.ru").name("tryHard").build();
         User user2 = User.builder().email("12345@mail.ru").name("tryHard2").build();
         em.persist(user);

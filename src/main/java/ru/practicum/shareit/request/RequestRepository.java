@@ -11,5 +11,5 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Page<Request> findAllByUserIdOrderByCreatedDesc(Long userId, PageRequest pageRequest);
 
-    Page<Request> findAllByUserIdNotOrderByCreatedDesc(Long UserId, PageRequest pageRequest);
+    Page<Request> findAllByUserIdNotOrderByCreatedDesc(Long userId, PageRequest pageRequest);
 }
