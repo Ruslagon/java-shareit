@@ -7,7 +7,7 @@ public class QCommentTest {
     QComment qComment = QComment.comment;
 
     @Test
-    void qTest () {
+    void qTest() {
         qComment.item.id.eq(1L);
         qComment.text.toLowerCase();
         qComment.id.eq(21L);

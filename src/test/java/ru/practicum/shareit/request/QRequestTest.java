@@ -8,7 +8,7 @@ public class QRequestTest {
     QRequest qRequest = QRequest.request;
 
     @Test
-    void qTest () {
+    void qTest() {
         qRequest.id.eq(1L);
         qRequest.created.asc();
         qRequest.user.id.eq(1L);
