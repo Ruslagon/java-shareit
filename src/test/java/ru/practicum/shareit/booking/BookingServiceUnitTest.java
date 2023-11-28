@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.exception.model.BadRequest;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
