@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.BookingStatus;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * TODO Sprint add-bookings.
@@ -19,7 +18,10 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class BookingDto {
+
+    @EqualsAndHashCode.Include
     private Long id;
     @NotNull
     private Long itemId;
@@ -31,17 +33,4 @@ public class BookingDto {
     @NotNull
     private LocalDateTime end;
     private BookingStatus status;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BookingDto that = (BookingDto) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

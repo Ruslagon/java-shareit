@@ -7,7 +7,6 @@ import ru.practicum.shareit.validation.Marker;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -16,7 +15,9 @@ import java.util.Objects;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserDto {
+    @EqualsAndHashCode.Include
     private Long id;
     @NotEmpty(groups = Marker.OnCreate.class)
     private String name;
@@ -25,16 +26,4 @@ public class UserDto {
     @Email(groups = {Marker.OnCreate.class, Marker.OnUpdate.class})
     private String email;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserDto userDto = (UserDto) o;
-        return Objects.equals(id, userDto.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

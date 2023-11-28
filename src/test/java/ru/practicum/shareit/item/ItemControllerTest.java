@@ -185,7 +185,7 @@ public class ItemControllerTest {
     void deleteItem() throws Exception {
         doNothing().when(itemService).delete(anyLong(), anyLong());
 
-        mvc.perform(get("/items/1")
+        mvc.perform(delete("/items/1")
                         .header("X-Sharer-User-Id", "1")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
