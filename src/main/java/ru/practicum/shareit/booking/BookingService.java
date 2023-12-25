@@ -73,13 +73,13 @@ public class BookingService {
         bookingRepository.deleteById(bookingId);
     }
 
-    public List<BookingInfoDto> getBookersBookings(Long bookerId, String state) {
+    public List<BookingInfoDto> getBookersBookings(Long bookerId, String state, Integer from, Integer size) {
         userRepository.findById(bookerId).orElseThrow(() -> new EntityNotFoundException("user по id - " + bookerId + " не найден"));
         LocalDateTime now = LocalDateTime.now();
         QBooking booking = QBooking.booking;
         BooleanExpression byBookerId = booking.booker.id.eq(bookerId);
         var sort2 = new QSort(booking.end.desc());
-        PageRequest pageRequest = PageRequest.of(0, 50, sort2);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, sort2);
         if (BookingState.ALL.name().equals(state)) {
             return bookingRepository.findAll(byBookerId, pageRequest).map(DtoBookingMapper::bookingToDto)
                     .getContent();
@@ -115,14 +115,14 @@ public class BookingService {
                 .orElseThrow(() -> new EntityNotFoundException("аренда не доступна " + bookingId)));
     }
 
-    public List<BookingInfoDto> getOwnersBookings(Long ownerId, String state) {
+    public List<BookingInfoDto> getOwnersBookings(Long ownerId, String state, Integer from, Integer size) {
         System.out.println(state);
         userRepository.findById(ownerId).orElseThrow(() -> new EntityNotFoundException("user по id - " + ownerId + " не найден"));
         LocalDateTime now = LocalDateTime.now();
         QBooking booking = QBooking.booking;
         BooleanExpression byOwnerId = booking.item.owner.id.eq(ownerId);
         var sort = new QSort(booking.end.desc());
-        PageRequest pageRequest = PageRequest.of(0, 50, sort);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, sort);
         if (BookingState.ALL.name().equals(state)) {
             return bookingRepository.findAll(byOwnerId, pageRequest).map(DtoBookingMapper::bookingToDto)
                     .getContent();

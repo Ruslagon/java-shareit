@@ -1,9 +1,11 @@
 package ru.practicum.shareit.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.comment.dto.CommentTest;
 import ru.practicum.shareit.comment.model.Comment;
 
+@Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     CommentTest findByIdAndAuthorId(Long id, Long authorId);

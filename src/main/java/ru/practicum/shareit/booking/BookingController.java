@@ -8,6 +8,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInfoDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -45,9 +47,11 @@ public class BookingController {
 
     @GetMapping
     public List<BookingInfoDto> getUsersBookings(@RequestHeader("X-Sharer-User-Id") Long bookerId,
-                                              @Valid @RequestParam(defaultValue = "ALL") String state) {
+                                              @Valid @RequestParam(defaultValue = "ALL") String state,
+                                                 @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                                 @RequestParam(defaultValue = "50") @Positive Integer size) {
         log.info("получить заказы по заказчику={}", bookerId);
-        return bookingService.getBookersBookings(bookerId, state);
+        return bookingService.getBookersBookings(bookerId, state, from, size);
     }
 
     @GetMapping("/{bookingId}")
@@ -58,8 +62,10 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingInfoDto> getOwnersBookings(@RequestHeader("X-Sharer-User-Id") Long ownerId,
-                                             @Valid @RequestParam(defaultValue = "ALL") String state) {
+                                             @Valid @RequestParam(defaultValue = "ALL") String state,
+                                                  @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
+                                                  @RequestParam(defaultValue = "50") @Positive Integer size) {
         log.info("получить заказы по владельцу={}", ownerId);
-        return bookingService.getOwnersBookings(ownerId, state);
+        return bookingService.getOwnersBookings(ownerId, state, from, size);
     }
 }

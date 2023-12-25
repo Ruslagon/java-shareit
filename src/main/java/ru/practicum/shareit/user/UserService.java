@@ -32,8 +32,8 @@ public class UserService {
         return DtoUserMapper.userToDto(userRepository.save(oldUser));
     }
 
-    public List<UserDto> getAll() {
-        PageRequest pageRequest = PageRequest.of(0, 50);
+    public List<UserDto> getAll(Integer from, Integer size) {
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
         return userRepository.findAll(pageRequest).map(DtoUserMapper::userToDto)
                 .getContent();
     }

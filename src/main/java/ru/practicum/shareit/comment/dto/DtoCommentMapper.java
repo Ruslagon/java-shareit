@@ -13,13 +13,13 @@ public class DtoCommentMapper {
         return comment;
     }
 
-    public static CommentDto itemToDto(Comment comment) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setId(comment.getId());
-        commentDto.setId(comment.getId());
-        commentDto.setText(comment.getText());
-        commentDto.setCreated(comment.getCreated());
-        commentDto.setAuthorName(comment.getAuthor().getName());
-        return commentDto;
-    }
+//    public static CommentDto itemToDto(Comment comment) {
+//        CommentDto commentDto = new CommentDto();
+//        commentDto.setId(comment.getId());
+//        commentDto.setId(comment.getId());
+//        commentDto.setText(comment.getText());
+//        commentDto.setCreated(comment.getCreated());
+//        commentDto.setAuthorName(comment.getAuthor().getName());
+//        return commentDto;
+//    }
 }

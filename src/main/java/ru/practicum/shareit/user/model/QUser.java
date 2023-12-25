@@ -6,7 +6,6 @@ import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
-import com.querydsl.core.types.Path;
 
 
 /**
@@ -29,9 +28,9 @@ public class QUser extends EntityPathBase<User> {
         super(User.class, forVariable(variable));
     }
 
-    public QUser(Path<? extends User> path) {
-        super(path.getType(), path.getMetadata());
-    }
+//    public QUser(Path<? extends User> path) {
+//        super(path.getType(), path.getMetadata());
+//    }
 
     public QUser(PathMetadata metadata) {
         super(User.class, metadata);

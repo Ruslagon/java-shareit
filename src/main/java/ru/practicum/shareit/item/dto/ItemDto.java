@@ -11,19 +11,21 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * TODO Sprint add-controllers.
  */
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ItemDto {
+    @EqualsAndHashCode.Include
     private Long id;
 
     private User owner;
@@ -46,19 +48,6 @@ public class ItemDto {
 
     @JsonInclude
     List<CommentTest> comments = new ArrayList<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemDto itemDto = (ItemDto) o;
-        return Objects.equals(id, itemDto.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 
     public void setId(Long id) {
         this.id = id;
