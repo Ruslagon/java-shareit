@@ -2,7 +2,6 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.RequestDto;
 
@@ -10,7 +9,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@Validated
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
 public class RequestController {
